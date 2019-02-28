@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React Intro</title>
+	<script src="react.development.js"></script>
+	<script src="react-dom.development.js"></script>
+	<script>
+		(function(){
+			window.addEventListener('DOMContentLoaded', init);
+			function init(){
+				var btnRender = document.getElementById('btnRender');
+				btnRender.addEventListener('click', onBtnRenderClick);
+			}
+
+			var counter = 0;
+			function onBtnRenderClick(){
+				var h1Ele = React.createElement('h1',{id : 'heading-1'},'Welcome to React.js - ' + ++counter);
+				ReactDOM.render(h1Ele, document.getElementById('root'))
+			}
+		})();
+	</script>
+</head>
+<body>
+	<input type="button" value="render" id="btnRender" />
+	<div id="root"></div>
+</body>
+</html>
