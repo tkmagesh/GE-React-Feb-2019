@@ -86,9 +86,12 @@
 				this.triggerChange();
 			}
 
-			toggle(bug){
-				bug.isClosed = !bug.isClosed;
+			removeClosed() {
+				this.bugs = this.bugs.filter(bug => !bug.isClosed);
+				this.triggerChange();
 			}
+
+
 		}
 
 		class BugItem extends React.Component{
@@ -144,7 +147,7 @@
 							<ol>
 								{bugItems}
 							</ol>
-							<input type="button" value="Remove Closed" />
+							<input type="button" value="Remove Closed" onClick={() => this.props.collection.removeClosed()}/>
 						</section>
 					</>
 				)

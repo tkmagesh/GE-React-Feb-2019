@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>State Manager</title>
+	<script src="stateManager.js"></script>
+	<script>
+
+		/*function spinnerReducer(currentState = 0, action){
+			if (action === 'UP') return ++currentState;
+			if (action === 'DOWN') return --currentState;
+			return currentState;
+		}
+		
+		var store = stateManager.createStore(spinnerReducer)
+		
+		store.dispatch('UP')
+		
+		store.getState()
+
+		store.subscribe(() => console.log(store.getState()));
+
+		store.dispatch('DOWN')
+		*/
+
+	</script>
+</head>
+<body>
+	<h1>Spinner</h1>
+	<hr>
+	<div>
+		<input type="button" value="DOWN">
+		<span> [ 0 ] </span>
+		<input type="button" value="UP">
+	</div>
+</body>
+</html>
