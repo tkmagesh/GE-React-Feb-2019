@@ -60,6 +60,19 @@
 			}
 		}
 
+		class BugModel{
+			name = '';
+			isClosed = false;
+
+			constructor(name){
+				this.name = name;
+			}
+
+			toggle(){
+				this.isClosed = !this.isClosed;
+			}
+		}
+
 		class BugsCollectionModel extends EventEmitter{
 			bugs = [];
 
@@ -68,8 +81,29 @@
 			}
 
 			addNew(bugName){
-				this.bugs.push(bugName);
+				let newBug = new BugModel(bugName);
+				this.bugs.push(newBug);
 				this.triggerChange();
+			}
+
+			toggle(bug){
+				bug.isClosed = !bug.isClosed;
+			}
+		}
+
+		class BugItem extends React.Component{
+			onBugNameClick = () => {
+				this.props.bug.toggle();
+				console.log(this.props.bug);
+			}
+			render = () => {
+				return(
+					<li>
+						<span className="bugname" onClick={this.onBugNameClick}>
+							{JSON.stringify(this.props.bug)}
+						</span>
+					</li>
+				)
 			}
 		}
 		class BugTracker extends React.Component{
@@ -78,13 +112,12 @@
 			onAddNewClick = () => {
 				this.props.collection.addNew(this.state.newBugName);
 			}
+			
 			render = () => {
 				let { collection } = this.props,
 					bugs = collection.getAll(),
 					bugItems = bugs.map((bug, index) => (
-						<li key={index}>
-							<span className="bugname">{bug}</span>
-						</li>
+						<BugItem  key={index} bug={bug} />
 					))
 				return(
 					<>
