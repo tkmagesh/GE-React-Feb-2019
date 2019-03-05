@@ -29,6 +29,17 @@ var stateManager = (function(){
 		return { subscribe, getState, dispatch };
 	}
 
-	return { createStore };
+	function bindActionCreators(actionCreators, dispatch){
+		let result = {};
+		for(let key in actionCreators){
+			result[key] = function(...args){
+				let action = actionCreators[key](...args);
+				dispatch(action);
+			}
+		}
+		return result;
+	}
+
+	return { createStore, bindActionCreators };
 
 })();
