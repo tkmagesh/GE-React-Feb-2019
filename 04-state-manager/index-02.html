@@ -38,7 +38,7 @@
 			}
 		}
 		function renderSpinner(){
-			let value = store.getState(),
+			let value = store.getState();
 			ReactDOM.render(<Spinner spinnerValue={value} dispatch={store.dispatch}/>,
 				document.getElementById('root'));
 		}
