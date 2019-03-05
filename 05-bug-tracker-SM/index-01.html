@@ -52,43 +52,89 @@
 		
 		function bugsReducer(currentState=[], action){
 			if (action.type === 'ADD_NEW'){
-				let newBug = {
-					name : action.payload,
-					isClosed : false;
-				}
-				currentState.push(newBug);
-				return currentState;
+				let newBug = action.payload;
+				let newState = [ ...currentState, newBug];
+				return newState;
+			}
+			if (action.type === 'REPLACE'){
+				let { oldBug, newBug } = action.payload;
+				let newState = currentState.map(bug => bug === oldBug ? newBug : bug );
+				return newState;
+			}
+			if (action.type === 'REMOVE'){
+				let bugsToRemove = action.payload;
+				let newState = currentState.filter(bug => bugsToRemove.indexOf(bug) === -1);
+				return newState;
 			}
 			return currentState;
 		}
 
-		var store = stateManager.createStore(bugsReducer);
+		let store = stateManager.createStore(bugsReducer);
 
 		//create actionCreators
+		let bugActionCreators = {
+			addNew(bugName){
+				let newBug = { name : bugName, isClosed : false } ;
+				let action = {
+					type : 'ADD_NEW',
+					payload : newBug
+				}
+				return action;
+			},
+			toggle(bugToToggle){
+				let toggledBug = { ...bugToToggle, isClosed : !bugToToggle.isClosed };
+				let action = {
+					type : 'REPLACE',
+					payload : { oldBug : bugToToggle, newBug : toggledBug }
+				};
+				return action;
+			},
+			removeClosed(bugs){
+				let closedBugs = bugs.filter(bug => bug.isClosed);
+				let action = {
+					type : 'REMOVE',
+					payload : closedBugs
+				};
+				return action;
+			}
+		}
+
+
 		//create actionDispatchers (by using bindActionCreators)
-		//pass the data from the store and actionDispatchers to the component
+		let bugActionDispatchers = stateManager.bindActionCreators(bugActionCreators, store.dispatch);
+
+		
 		//display the data appropriately in the component
 		//call the actionDispatchers appropriately in the component
 		//subscribe to the store for re-rendering
 
+		class BugItem extends React.Component{
+			onBugNameClick = () => {
+				this.props.toggle(this.props.bug);
+			}
+			render = () => {
+				let { bug } = this.props;
+				return(
+					<li>
+						<span className="bugname" onClick={this.onBugNameClick}>
+							{JSON.stringify(bug)}
+						</span>
+					</li>
+				)
+			}
+		}
 		class BugTracker extends React.Component{
 			state = { newBugName : '' };
 
-			onBugNameClick = () => {
-				
-			}
+			
 			onAddNewClick = () => {
-				
+				this.props.addNew(this.state.newBugName);
 			}
 			
 			render = () => {
-				let	bugs = [],
+				let	{ bugs, toggle, removeClosed } = this.props,
 					bugItems = bugs.map((bug, index) => (
-						<li>
-							<span className="bugname" onClick={this.onBugNameClick}>
-								{JSON.stringify(bug)}
-							</span>
-						</li>
+						<BugItem key={index} bug={bug} toggle={toggle}/>
 					))
 				return(
 					<>
@@ -115,15 +161,21 @@
 							<ol>
 								{bugItems}
 							</ol>
-							<input type="button" value="Remove Closed" onClick={() => this.props.collection.removeClosed()}/>
+							<input type="button" value="Remove Closed" onClick={() => removeClosed(bugs) }/>
 						</section>
 					</>
 				)
 			}
 		}
-
-		ReactDOM.render(<BugTracker />,
-			document.getElementById('root'));
+	
+		//pass the data from the store and actionDispatchers to the component
+		function renderApp(){
+			let bugs = store.getState();
+			ReactDOM.render(<BugTracker bugs={bugs} {...bugActionDispatchers} />,
+				document.getElementById('root'));
+		}
+		renderApp();
+		store.subscribe(renderApp);
 	
 	</script>
 </head>
